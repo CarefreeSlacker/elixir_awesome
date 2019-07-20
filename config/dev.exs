@@ -67,9 +67,9 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 # Configure your database
-config :elixir_awesome, ElixirAwesome.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "elixir_awesome_dev",
-  hostname: "localhost",
-  pool_size: 10
+#config :elixir_awesome, ElixirAwesome.Repo,
+#  username: "postgres",
+#  password: "postgres",
+#  database: "elixir_awesome_dev",
+#  hostname: "localhost",
+#  pool_size: 10

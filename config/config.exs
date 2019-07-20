@@ -7,8 +7,8 @@
 # General application configuration
 use Mix.Config
 
-config :elixir_awesome,
-  ecto_repos: [ElixirAwesome.Repo]
+#config :elixir_awesome,
+#  ecto_repos: [ElixirAwesome.Repo]
 
 # Configures the endpoint
 config :elixir_awesome, ElixirAwesomeWeb.Endpoint,

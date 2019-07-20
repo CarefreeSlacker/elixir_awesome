@@ -8,10 +8,10 @@
     <h2>Resources</h2>
     <ul>
       <li>
-        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
+        <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-warning">Guides &amp; Docs</a>
       </li>
       <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
+        <a href="https://github.com/phoenixframework/phoenix" class="btn btn-error">Source</a>
       </li>
       <li>
         <a href="https://github.com/phoenixframework/phoenix/blob/v1.4/CHANGELOG.md">v1.4 Changelog</a>

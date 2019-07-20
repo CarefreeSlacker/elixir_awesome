@@ -45,3 +45,15 @@ Github.
 * Для осуществления HTTP запросов используется HTTPoison
 * Получение данных из GitHub осуществляется с помощью REST API https://developer.github.com/v3/
 * Для стилей используется Bootstrap
+
+## Установка
+
+**Установка зависимостей**
+
+mix deps.get
+mix ecto.create
+
+**Установка Javascript**
+
+cd assets
+npm i

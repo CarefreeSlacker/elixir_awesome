@@ -9,7 +9,7 @@ defmodule ElixirAwesome.Application do
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
-      ElixirAwesome.Repo,
+      # ElixirAwesome.Repo,
       # Start the endpoint when the application starts
       ElixirAwesomeWeb.Endpoint
       # Starts a worker by calling: ElixirAwesome.Worker.start_link(arg)

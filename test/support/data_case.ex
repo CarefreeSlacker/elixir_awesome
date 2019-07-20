@@ -16,7 +16,7 @@ defmodule ElixirAwesome.DataCase do
 
   using do
     quote do
-      alias ElixirAwesome.Repo
+#      alias ElixirAwesome.Repo
 
       import Ecto
       import Ecto.Changeset
@@ -26,11 +26,11 @@ defmodule ElixirAwesome.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirAwesome.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ElixirAwesome.Repo, {:shared, self()})
-    end
+#    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirAwesome.Repo)
+#
+#    unless tags[:async] do
+#      Ecto.Adapters.SQL.Sandbox.mode(ElixirAwesome.Repo, {:shared, self()})
+#    end
 
     :ok
   end

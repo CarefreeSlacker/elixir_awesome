@@ -10,9 +10,9 @@ config :elixir_awesome, ElixirAwesomeWeb.Endpoint,
 config :logger, level: :warn
 
 # Configure your database
-config :elixir_awesome, ElixirAwesome.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "elixir_awesome_test",
-  hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+#config :elixir_awesome, ElixirAwesome.Repo,
+#  username: "postgres",
+#  password: "postgres",
+#  database: "elixir_awesome_test",
+#  hostname: "localhost",
+#  pool: Ecto.Adapters.SQL.Sandbox
