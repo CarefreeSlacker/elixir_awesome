@@ -27,11 +27,11 @@ defmodule ElixirAwesomeWeb.ConnCase do
   end
 
   setup tags do
-#    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirAwesome.Repo)
-#
-#    unless tags[:async] do
-#      Ecto.Adapters.SQL.Sandbox.mode(ElixirAwesome.Repo, {:shared, self()})
-#    end
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirAwesome.Repo)
+
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(ElixirAwesome.Repo, {:shared, self()})
+    end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
