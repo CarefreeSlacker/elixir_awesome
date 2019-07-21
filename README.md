@@ -45,14 +45,14 @@ Github.
 * Получение данных из GitHub осуществляется с помощью REST API https://developer.github.com/v3/
 * Для стилей используется Bootstrap
 
-## Установка
+## Gjluj
 
-**Установка зависимостей**
+**Подготовка Backend**
 
-mix deps.get
-mix ecto.setup
+* mix deps.get
+* mix ecto.setup
 
-**Установка Javascript**
+**Подготовка Frontend**
 
-cd assets
-npm i
+* cd assets
+* npm i

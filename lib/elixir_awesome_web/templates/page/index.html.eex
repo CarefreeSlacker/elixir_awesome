@@ -1,35 +1,38 @@
-<section class="phx-hero">
-  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-  <p>A productive web framework that<br/>does not compromise speed or maintainability.</p>
-</section>
-
-<section class="row">
-  <article class="column">
-    <h2>Resources</h2>
-    <ul>
+<div id="table-of-content" class="container">
+  <h1 class="h1">Table of content</h1>
+  <ul>
+    <%= Enum.map(@sections, fn section -> %>
       <li>
-        <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-warning">Guides &amp; Docs</a>
+        <a href="<%= name_to_link(section.name) %>">
+          <%= section.name %>
+        </a>
       </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix" class="btn btn-error">Source</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix/blob/v1.4/CHANGELOG.md">v1.4 Changelog</a>
-      </li>
-    </ul>
-  </article>
-  <article class="column">
-    <h2>Help</h2>
-    <ul>
-      <li>
-        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
-      </li>
-      <li>
-        <a href="https://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on Freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
-      </li>
-    </ul>
-  </article>
-</section>
+    <% end) %>
+  </ul>
+</div>
+<div id="sections" class="container">
+  <div>
+    <h1 class="h1">Sections</h1>
+  </div>
+  <%= Enum.map(@sections, fn section -> %>
+      <h2 class="h2" id="<%= name_to_link_id(section.name) %>">
+        <a href="#table-of-content" class="btn" title="To tables of content">&#x2B06;</a>
+        <%= section.name %>
+      </h2>
+      <p><%= section.comment %></p>
+      <table class="table">
+        <%= Enum.map(section.libraries, fn library -> %>
+          <tr>
+            <td>
+              <a href="<%= library.url %>">
+                <%= library.name %>
+              </a>
+            </td>
+            <td>Stars: <%= library.stars %></td>
+            <td><%= library.last_commit %></td>
+            <td><%= library.comment %></td>
+          </tr>
+        <% end) %>
+      </table>
+    <% end) %>
+</div>
