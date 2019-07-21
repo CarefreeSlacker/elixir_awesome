@@ -43,7 +43,12 @@ defmodule ElixirAwesome.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:cronex, "~> 0.4.0"}
+      # Scheduling
+      {:cronex, "~> 0.4.0"},
+      # Parsing data
+      {:sweet_xml, "~> 0.3.0"},
+      {:cmark, "~> 0.7"},
+      {:httpoison, "~> 1.5.1"}
     ]
   end
 

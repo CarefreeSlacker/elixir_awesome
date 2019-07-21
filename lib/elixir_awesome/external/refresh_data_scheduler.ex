@@ -4,6 +4,7 @@ defmodule ElixirAwesome.External.RefreshDataScheduler do
   """
 
   use Cronex.Scheduler
+  alias ElixirAwesome.External.LibrariesService
 
   def start_link(_opts) do
     Supervisor.start_link(__MODULE__, nil, name: __MODULE__)
@@ -13,7 +14,8 @@ defmodule ElixirAwesome.External.RefreshDataScheduler do
     IO.puts("!!! it's time to refresh")
   end
 
-  every(:minute) do
-    IO.puts("!!! one more minute #{inspect(NaiveDateTime.utc_now())}")
+  every(1, :minute) do
+    #    result = LibrariesService.perform()
+    #    IO.puts("!!! libraries creation result #{inspect(result)}")
   end
 end
