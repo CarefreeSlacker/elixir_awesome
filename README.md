@@ -1,20 +1,58 @@
 # ElixirAwesome
 
-To start your Phoenix server:
+## Задание 
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+У языка Elixir, как и у многих других 1 , существует свой «awesome list»: h4cc/awesome-
+elixir. Однако, библиотеки, будучи добавленными в него, устаревают, перестают
+поддерживаться или, не набрав заметной популярности, начинают уступать своим
+аналогам.
+Для наглядного отображения состояния библиотек в awesome list для Elixir вам
+предлагается реализовать web-приложение, удовлетворяющее следующим
+требованиям:
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+* Приложение написано на языке Elixir с использованием фреймворка Phoenix.
+* Приложение состоит из единственной заглавной страницы: /.
+* На этой странице отображена информация о библиотеках Elixir, полученная из 
+репозитария awesome list-а https://github.com/h4cc/awesome-elixir.
+* Эта информация обновляется ежедневно.   
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+К описанию каждой библиотеки добавлена следующая информация:
+* число ее звезд на Github;
+* число дней, прошедших со времени последнего коммита в её репозиторий на
+Github.
 
-## Learn more
+Страница принимает параметр min_stars: /?min_stars=50.
+При указании этого параметра на странице выводятся только те библиотеки, у которых
+не менее min_stars звезд.
+Если в каком-то разделе не оказалось библиотек после фильтрации по min_stars, то
+весь раздел не отображается.
+Код должен быть покрыт тестами.
+Инструкции по запуску должны находиться в README.
+Пример функциональности того, что должно получиться: http://awesome-elixir.ru/
 
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+## План действий:
+
+* Сверстать страницу с моком данных и фильтрацией по звёздам
+* Реализовать автоматический запрос по крону обновления данных
+* (Опционально) Реализовать страницу с LiveView, возможностью динамически подгрузать данные по репозиториям.
+
+## Детали
+
+* Загрузка данных по библиотекам осуществляется асинхронно
+* Интервал загрузки задаётся в настройках приложения
+* Загрузка осуществляется по CRON
+* Для осуществления HTTP запросов используется HTTPoison
+* Получение данных из GitHub осуществляется с помощью REST API https://developer.github.com/v3/
+* Для стилей используется Bootstrap
+
+## Gjluj
+
+**Подготовка Backend**
+
+* mix deps.get
+* mix ecto.setup
+
+**Подготовка Frontend**
+
+* cd assets
+* npm i
