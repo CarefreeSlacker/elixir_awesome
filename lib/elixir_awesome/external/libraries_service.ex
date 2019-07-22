@@ -11,13 +11,12 @@ defmodule ElixirAwesome.External.LibrariesService do
   """
   def perform do
     with {:ok, markdown} <- RequestService.perform(),
-         {:ok, {sections_data, libraries_data}} <- Parser.perform(markdown),
-         {:ok, {created_sections, created_libraries}} <-
-           LibrariesCreator.perform(sections_data, libraries_data) do
+         {:ok, sections_data} <- Parser.perform(markdown),
+         {:ok, enriched_sections_data} <- RequestService.request_libs_data(sections_data),
+         {:ok, {{created_sec, updated_sec, deleted_sec}, {created_lib, updated_lib, deleted_lib}}} <-
+           LibrariesCreator.perform(enriched_sections_data) do
       {:ok,
-       "Request successful. #{length(created_sections)} sections created. #{
-         length(created_libraries)
-       } libraries created."}
+       "Request successful. #{created_sec} sections created. #{created_lib} libraries created."}
     else
       {:error, reason} -> {:error, reason}
     end

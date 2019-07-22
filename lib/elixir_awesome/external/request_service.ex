@@ -8,12 +8,20 @@ defmodule ElixirAwesome.External.RequestService do
   @doc """
   Request data and return {:ok, markdown_file_as_string} | {:error, reason}
   """
-  @spec perform :: {:ok, binary} | {:error, term}
-  def perform do
+  @spec get_page :: {:ok, binary} | {:error, term}
+  def get_page do
     with {:ok, %HTTPoison.Response{body: body}} <- HTTPoison.get(@file_url, [], []) do
       {:ok, body}
     else
       error -> error
     end
+  end
+
+  @doc """
+  Request metadata for given libraries.
+  Requests stars count and last_commit date_time.
+  Enrich given sections data libraries with new information.
+  """
+  def request_libs_data(sections_data) do
   end
 end

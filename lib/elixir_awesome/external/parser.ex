@@ -6,14 +6,33 @@ defmodule ElixirAwesome.External.Parser do
   import SweetXml
 
   @doc """
-  Gets markdown and returns {:ok, {sections_data, libraries_data}} | {:error, reason}
+  Gets markdown and returns {:ok, sections_data} | {:error, reason}
+  Sections data contains data for sections with data about libraries
+  Looks like:
+
+  ```
+  [
+    %{
+      name: "Actors",
+      comment: "Libraries for working with Actors",
+      libraries: [
+        %{
+          name: "dflow",
+          url: "https://github.com/dalmatinerdb/dflow",
+          comment: "Pipelined flow processing engine."
+        },
+        ...
+      ]
+    }
+  ]
+  ```
   """
-  @spec perform(binary) :: {:ok, {list(map), list(map)}} | {:error, term}
+  @spec perform(binary) :: {:ok, list(map)} | {:error, term}
   def perform(markdown) do
     with parsed_xml <- markdown_to_parsed_xml(markdown),
          sections_data <- get_sections_data(parsed_xml),
-         libraries_data <- get_libraries_data(parsed_xml, sections_data) do
-      {:ok, {sections_data, libraries_data}}
+         full_sections_data <- get_libraries_data(parsed_xml, sections_data) do
+      {:ok, full_sections_data}
     else
       error -> error
     end
@@ -27,10 +46,54 @@ defmodule ElixirAwesome.External.Parser do
   end
 
   defp get_sections_data(parsed_xml) do
-    []
+    parsed_xml
+    |> select_section_names()
+    |> Enum.map(fn section_name ->
+      %{
+        name: section_name,
+        comment: select_section_comment(parsed_xml, section_name)
+      }
+    end)
   end
 
-  defp get_libraries_data(parsed_xml, sections_data) do
-    []
+  defp select_section_names(parsed_xml) do
+    xpath(
+      parsed_xml,
+      ~x"//list[@type=\"bullet\"][1]/item/list[@type=\"bullet\"]/item//text/text()"ls
+    )
+  end
+
+  defp select_section_comment(parsed_xml, section_name) do
+    xpath(
+      parsed_xml,
+      ~x"#{libraries_section_selector(section_name)}/following-sibling::paragraph[1]//text/text()"s
+    )
+  end
+
+  defp libraries_section_selector(section_name) do
+    "//heading[@level=\"2\"]//.[text()=\"#{section_name}\"]/.."
+  end
+
+  def get_libraries_data(parsed_xml, sections_data) do
+    sections_data
+    |> Enum.map(fn %{name: section_name} = section_data ->
+      section_libraries =
+        xpath(
+          parsed_xml,
+          ~x"#{libraries_section_selector(section_name)}/following-sibling::paragraph[1]/following-sibling::list[1]"
+        )
+        |> xpath(~x"//item/paragraph"l)
+        |> Enum.map(fn section_library ->
+          [raw_comment | name] = xpath(section_library, ~x"//text/text()"ls)
+
+          %{
+            name: Enum.join(name, ""),
+            url: xpath(section_library, ~x"//link/@destination"s),
+            comment: String.replace(raw_comment, " - ", "")
+          }
+        end)
+
+      Map.put(section_data, :libraries, section_libraries)
+    end)
   end
 end

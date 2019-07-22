@@ -8,7 +8,6 @@ defmodule ElixirAwesome.External.LibrariesCreator do
   """
   @spec perform(list(map), list(map)) :: {:ok, {list(map), list(map)}} | {:error, term}
   def perform(sections_data, libraries_data) do
-
     {:ok, {[], []}}
   end
 end
