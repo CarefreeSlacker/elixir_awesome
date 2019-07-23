@@ -71,4 +71,12 @@ defmodule ElixirAwesome.DomainModel.Context do
       order_by: s.name
     )
   end
+
+  def section_by_name(name) do
+    Repo.get_by(Section, %{name: name})
+  end
+
+  def library_by_name(name) do
+    Repo.get_by(Library, %{name: name})
+  end
 end

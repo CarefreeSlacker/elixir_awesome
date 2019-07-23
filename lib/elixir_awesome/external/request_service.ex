@@ -28,14 +28,15 @@ defmodule ElixirAwesome.External.RequestService do
   Enrich given sections data libraries with new information.
   """
   def request_libs_data(sections_data) do
-    enriched_sections_data = sections_data
-    |> Enum.map(fn %{libraries: libraries} = section_data ->
-      enriched_libraries =
-        libraries
-        |> Enum.map(&request_library_github_data/1)
+    enriched_sections_data =
+      sections_data
+      |> Enum.map(fn %{libraries: libraries} = section_data ->
+        enriched_libraries =
+          libraries
+          |> Enum.map(&request_library_github_data/1)
 
-      Map.put(section_data, :libraries, enriched_libraries)
-    end)
+        Map.put(section_data, :libraries, enriched_libraries)
+      end)
 
     {:ok, enriched_sections_data}
   end

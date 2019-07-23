@@ -3,7 +3,7 @@ defmodule ElixirAwesome.External.LibrariesService do
   Perform requesting parsing and writing to database.
   """
 
-  alias ElixirAwesome.External.{LibrariesCreator, Parser, RequestService}
+  alias ElixirAwesome.External.{DatabaseRecordsService, Parser, RequestService}
 
   @doc """
   First request Readme.md from sweet-xml repository.
@@ -14,13 +14,26 @@ defmodule ElixirAwesome.External.LibrariesService do
   def perform do
     with {:ok, markdown} <- RequestService.get_page(),
          {:ok, sections_data} <- Parser.perform(markdown),
-         {:ok, enriched_sections_data} <- RequestService.request_libs_data(sections_data),
-         {:ok, {{created_sec, updated_sec, deleted_sec}, {created_lib, updated_lib, deleted_lib}}} <-
-           LibrariesCreator.perform(enriched_sections_data) do
+         # RequestService.request_libs_data(sections_data),
+         {:ok, enriched_sections_data} <- {:ok, sections_data},
+         {:ok, {{created_sec, updated_sec}, {created_lib, updated_lib}}} <-
+           create_or_update_database_records(enriched_sections_data),
+         {:ok, {deleted_sec, deleted_lib}} <-
+           delete_extra_database_records(enriched_sections_data) do
       {:ok,
        "Request successful. #{created_sec} sections created. #{created_lib} libraries created."}
     else
       {:error, reason} -> {:error, reason}
     end
+  end
+
+  defp create_or_update_database_records(enriched_sections_data) do
+    enriched_sections_data
+    |> Enum.map(fn section_data -> DatabaseRecordsService.create_or_update(section_data) end)
+  end
+
+  defp delete_extra_database_records(enriched_sections_data) do
+    enriched_sections_data
+    |> Enum.map(fn section_data -> DatabaseRecordsService.delete(section_data) end)
   end
 end
