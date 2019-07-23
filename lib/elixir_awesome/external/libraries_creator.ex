@@ -4,10 +4,10 @@ defmodule ElixirAwesome.External.LibrariesCreator do
   """
 
   @doc """
-  Gets
+  Create, update or delete libraries by data given in sections_data
   """
-  @spec perform(list(map), list(map)) :: {:ok, {list(map), list(map)}} | {:error, term}
-  def perform(sections_data, libraries_data) do
-    {:ok, {[], []}}
+  @spec perform(list(map)) :: {:ok, {{integer, integer}, {integer, integer}}} | {:error, term}
+  def perform(sections_data) do
+    {:ok, {{0, 0}, {0, 0}}}
   end
 end

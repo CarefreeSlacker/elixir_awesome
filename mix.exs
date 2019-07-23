@@ -48,7 +48,8 @@ defmodule ElixirAwesome.MixProject do
       # Parsing data
       {:sweet_xml, "~> 0.3.0"},
       {:cmark, "~> 0.7"},
-      {:httpoison, "~> 1.5.1"}
+      {:httpoison, "~> 1.5.1"},
+      {:timex, "~> 3.5"}
     ]
   end
 
