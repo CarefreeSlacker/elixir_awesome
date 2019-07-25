@@ -8,12 +8,13 @@ defmodule ElixirAwesome.GithubData.Api do
   This module contains functions for managing and monitoring data requesting process.
   """
 
+  alias ElixirAwesome.GithubData.{Manager, ProxyManager, RequestWorker, Supervisor}
   @doc """
   Start worker those manage requesting process.
   """
-  @spec start_request_manager(list(map)) :: {:ok, pid} | {:error, any}
-  def start_request_manager(libraries_list) do
-    {:ok, :pid}
+  @spec start_manager(list(map)) :: {:ok, pid} | {:error, any}
+  def start_manager(libraries_list) do
+    Supervisor.start_manager(libraries_list)
   end
 
   @doc """
@@ -21,31 +22,31 @@ defmodule ElixirAwesome.GithubData.Api do
   """
   @spec get_processed_status :: {:ok, binary} | {:error, binary}
   def get_processed_status do
-    {:ok, "0/0"}
+    Manager.get_processed()
   end
 
   @doc """
-  Gets worker data from manager
+  Start proxy maanager
   """
-  @spec get_worker_data :: {:ok, binary}
-  def get_worker_data do
-    {:ok, "0/0"}
+  @spec start_proxy_manager :: {:ok, pid} | {:error, any}
+  def start_proxy_manager do
+    Supervisor.start_proxy_manager()
   end
 
   @doc """
   Start RequestWorker for given library data.
   """
-  @spec start_request_worker :: {:ok, pid} | {:error, atom}
-  def start_request_worker do
-    {:ok, "0/0"}
+  @spec start_request_worker(integer, map) :: {:ok, pid} | {:error, atom}
+  def start_request_worker(worker_id, library_data) do
+    Supervisor.start_request_worker(%{worker_id: worker_id, library_data: library_data})
   end
 
   @doc """
   Return free proxy or error if all proxies occupied.
   """
-  @spec get_free_proxy :: {:ok, pid} | {:error, atom}
+  @spec get_free_proxy :: {:ok, binary} | {:error, :no_available_proxies}
   def get_free_proxy do
-    {:ok, "0/0"}
+    ProxyManager.get_proxy()
   end
 
   @doc """

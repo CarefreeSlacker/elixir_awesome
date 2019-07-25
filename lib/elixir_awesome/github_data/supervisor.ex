@@ -13,15 +13,15 @@ defmodule ElixirAwesome.GithubData.Supervisor do
     DynamicSupervisor.init(strategy: :one_for_one, resetart: :transient)
   end
 
-  def start_manager do
-    DynamicSupervisor.start_child(__MODULE__, {Manager, []})
+  def start_manager(libraries_list) do
+    DynamicSupervisor.start_child(__MODULE__, {Manager, libraries_list})
   end
 
   def start_proxy_manager do
     DynamicSupervisor.start_child(__MODULE__, {ProxyManager, []})
   end
 
-  def start_request_worker do
-    DynamicSupervisor.start_child(__MODULE__, {RequestWorker, :rand.uniform()})
+  def start_request_worker(params) do
+    DynamicSupervisor.start_child(__MODULE__, {RequestWorker, params})
   end
 end

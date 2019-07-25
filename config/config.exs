@@ -28,6 +28,10 @@ config :phoenix, :json_library, Jason
 config :elixir_awesome, :external,
   readme_file_url: "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
 
+config :elixir_awesome, :github_data,
+  proxies_list: ["http://google.ru", "http://ya.ru", "http://mail.ru"],
+  between_requests_interval: 5000
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
