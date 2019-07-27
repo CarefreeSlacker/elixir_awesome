@@ -9,6 +9,7 @@ defmodule ElixirAwesome.GithubData.Api do
   """
 
   alias ElixirAwesome.GithubData.{Manager, ProxyManager, RequestWorker, Supervisor}
+
   @doc """
   Start worker those manage requesting process.
   """

@@ -4,11 +4,11 @@ defmodule ElixirAwesome.GithubData.Manager do
   """
 
   @stages_white_list [:start_proxy_manager, :working, :finish_work]
-  @max_workers_count 3
+  @max_workers_count length(Application.get_env(:elixir_awesome, :github_data)[:proxies_list])
 
-  alias ElixirAwesome.GithubData.Api
+  alias ElixirAwesome.GithubData.{Api, ProxyManager}
 
-  use GenServer
+  use GenServer, restart: :transient
 
   # Public API
 
@@ -43,7 +43,6 @@ defmodule ElixirAwesome.GithubData.Manager do
   end
 
   def handle_info(:start_proxy_manager, state) do
-    IO.puts("!!! #{inspect(NaiveDateTime.utc_now())} manager start_proxy_manager #{inspect(state)}")
     Api.start_proxy_manager()
     schedule_stage(:working)
     {:noreply, state}
@@ -58,8 +57,6 @@ defmodule ElixirAwesome.GithubData.Manager do
           workers_list: workers_list
         } = state
       ) do
-    IO.puts("!!! #{inspect(NaiveDateTime.utc_now())} manager working #{inspect(state)}")
-
     cond do
       workers_count >= @max_workers_count ->
         schedule_stage(:working, 1000)
@@ -75,13 +72,14 @@ defmodule ElixirAwesome.GithubData.Manager do
              {:ok, pid} <- Api.start_request_worker(worker_id, library_data) do
           Process.monitor(pid)
           schedule_stage(:working, 1000)
+
           {:noreply,
            %{
              state
              | libraries_list: rest_libraries,
                processing_libraries_list: processing_libraries_list ++ [{pid, library_data}],
-              workers_count: workers_count + 1,
-              workers_list: List.update_at(workers_list, worker_id, fn _val -> pid end)
+               workers_count: workers_count + 1,
+               workers_list: List.update_at(workers_list, worker_id, fn _val -> pid end)
            }}
         else
           _ ->
@@ -92,7 +90,7 @@ defmodule ElixirAwesome.GithubData.Manager do
   end
 
   def handle_info(:finish_work, state) do
-    IO.puts("!!! #{inspect(NaiveDateTime.utc_now())} manager finish_work #{inspect(state)}")
+    ProxyManager.finish_work()
     {:stop, :normal, state}
   end
 
@@ -104,19 +102,23 @@ defmodule ElixirAwesome.GithubData.Manager do
           workers_list: workers_list
         } = state
       ) do
-    IO.puts("!!! manager handle_info #{inspect({:DOWN, _ref, :process, process_pid, _reason})}")
     worker_id = Enum.find_index(workers_list, fn worker_pid -> worker_pid == process_pid end)
     new_workers_list = List.update_at(workers_list, worker_id, fn _val -> nil end)
-    IO.puts("!!! manager stopped worker #{worker_id}")
-    processed_library_index = Enum.find_index(processing_libraries_list, fn {worker_pid, _library_data} -> worker_pid == process_pid end)
-    new_processing_libraries_list = List.delete(processing_libraries_list, processed_library_index)
+
+    processed_library_index =
+      Enum.find_index(processing_libraries_list, fn {worker_pid, _library_data} ->
+        worker_pid == process_pid
+      end)
+
+    new_processing_libraries_list =
+      List.delete(processing_libraries_list, processed_library_index)
 
     {:noreply,
      %{
-       state |
-       processing_libraries_list: new_processing_libraries_list,
-       workers_count: workers_count - 1,
-       workers_list: new_workers_list
+       state
+       | processing_libraries_list: new_processing_libraries_list,
+         workers_count: workers_count - 1,
+         workers_list: new_workers_list
      }}
   end
 

@@ -3,7 +3,7 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
   Store Proxy data inside itself. Keep free and occupied proxies list.
   """
 
-  use GenServer
+  use GenServer, restart: :transient
 
   @proxy_configuration_list Application.get_env(:elixir_awesome, :github_data)[:proxies_list]
 
@@ -18,6 +18,10 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
 
   def get_proxy do
     GenServer.call(__MODULE__, :get_proxy)
+  end
+
+  def finish_work do
+    GenServer.cast(__MODULE__, :finish_work)
   end
 
   # Callbacks
@@ -46,20 +50,24 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
         {:DOWN, _ref, :process, fallen_reference, _reason},
         %{free_proxies: free_proxies, occupied_proxies: occupied_proxies} = state
       ) do
-    IO.puts("!! #{inspect(NaiveDateTime.utc_now())} proxy_manager handle_info #{inspect({:DOWN, _ref, :process, fallen_reference, _reason})}")
     index =
       Enum.find_index(occupied_proxies, fn {_occupied_proxy, ref} ->
         ref == fallen_reference
       end)
-    IO.puts("!! proxy index #{index} falen_ref #{inspect(fallen_reference)} occupied proxies #{inspect(occupied_proxies)}")
+
     {occupied_proxy, _proxy_pid} = Enum.at(occupied_proxies, index)
     new_occupied_proxies = List.delete_at(occupied_proxies, index)
+    new_free_proxies = free_proxies ++ [occupied_proxy]
 
     {:noreply,
      %{
        state
-       | free_proxies: [occupied_proxy | free_proxies],
+       | free_proxies: new_free_proxies,
          occupied_proxies: new_occupied_proxies
      }}
+  end
+
+  def handle_cast(:finish_work, state) do
+    {:stop, :normal, state}
   end
 end

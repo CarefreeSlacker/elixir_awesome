@@ -10,7 +10,7 @@ defmodule ElixirAwesome.GithubData.Supervisor do
   end
 
   def init(_opts) do
-    DynamicSupervisor.init(strategy: :one_for_one, resetart: :transient)
+    DynamicSupervisor.init(strategy: :one_for_one, restart: :transient)
   end
 
   def start_manager(libraries_list) do
