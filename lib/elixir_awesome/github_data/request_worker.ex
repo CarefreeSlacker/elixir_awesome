@@ -15,7 +15,7 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
                                      :between_requests_interval
                                    ]
 
-  alias ElixirAwesome.External.RequestService
+  alias ElixirAwesome.External.{DatabaseRecordsService, RequestService}
   alias ElixirAwesome.GithubData.Api
   use GenServer, restart: :transient
 
@@ -89,8 +89,8 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
     {:noreply, state}
   end
 
-  def handle_info(:get_stars, state) do
-    :timer.sleep(@await_between_requests_interval)
+  def handle_info(:create_or_update_record, %{library_data: library_data} = state) do
+    DatabaseRecordsService.create_or_update_library(library_data)
     schedule_stage(:finish_work, 100)
     {:noreply, state}
   end

@@ -25,15 +25,39 @@ defmodule ElixirAwesome.External.DatabaseRecordsService do
     {:ok, {{0, 0}, {0, 0}}}
   end
 
-  defp create_if_necessary(%{name: name} = data_map, find_function, create_function) do
+  defp create_if_necessary(
+         %{name: name} = data_map,
+         find_function,
+         create_function,
+         update_function
+       ) do
     case find_function.(name) do
       nil ->
         {:ok, record} = create_function.(data_map)
         record
 
       record ->
+        {:ok, record} = update_function.(record, data_map)
         record
     end
+  end
+
+  def create_or_update_section(section_data) do
+    create_if_necessary(
+      section_data,
+      &Context.section_by_name/1,
+      &Context.create_section/1,
+      &Context.update_section/1
+    )
+  end
+
+  def create_or_update_library(library_data) do
+    create_if_necessary(
+      library_data,
+      &Context.library_by_name/1,
+      &Context.create_library/1,
+      &Context.update_library/1
+    )
   end
 
   @doc """
