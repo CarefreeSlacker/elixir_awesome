@@ -4,6 +4,7 @@ defmodule ElixirAwesome.External.LibrariesService do
   """
 
   alias ElixirAwesome.External.{DatabaseRecordsService, Parser, RequestService}
+  alias ElixirAwesome.GithubData.Api
 
   @doc """
   First request Readme.md from sweet-xml repository.
@@ -29,7 +30,9 @@ defmodule ElixirAwesome.External.LibrariesService do
 
   defp create_or_update_database_records(enriched_sections_data) do
     enriched_sections_data
-    |> Enum.map(fn section_data -> DatabaseRecordsService.create_or_update(section_data) end)
+    |> Enum.map(fn section_data ->
+      DatabaseRecordsService.create_or_update_section(section_data)
+    end)
   end
 
   defp delete_extra_database_records(enriched_sections_data) do

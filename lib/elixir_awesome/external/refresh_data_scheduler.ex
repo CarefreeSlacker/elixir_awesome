@@ -11,6 +11,7 @@ defmodule ElixirAwesome.External.RefreshDataScheduler do
   end
 
   every(1, :day, at: "00:00") do
+    LibrariesService.perform()
     IO.puts("!!! it's time to refresh")
   end
 
