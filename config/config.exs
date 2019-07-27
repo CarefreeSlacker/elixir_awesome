@@ -30,16 +30,16 @@ config :elixir_awesome, :external,
 
 config :elixir_awesome, :github_data,
   proxies_list: [
-    "http://google.ru",
-    "http://ya.ru",
-    "http://mail.ru",
-    "http://sdf.ru",
-    "http://ag.ru",
-    "http://google.ru",
-    "http://ya.ru",
-    "http://mail.ru",
-    "http://sdf.ru",
-    "http://ag.ru"
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-38.131.159.167:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-185.123.242.89:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-193.31.74.77:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-173.211.111.78:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-184.174.58.140:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-184.174.62.33:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-193.31.74.44:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-158.46.158.145:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-181.214.181.102:lrzxs947e0j7",
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-178.171.113.127:lrzxs947e0j7"
   ],
   between_requests_interval: 7000
 

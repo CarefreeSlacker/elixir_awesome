@@ -5,7 +5,7 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
 
   use GenServer, restart: :transient
 
-  @proxy_configuration_list Application.get_env(:elixir_awesome, :github_data)[:proxies_list]
+  alias ElixirAwesome.GithubData.ProxyService
 
   # API
   def start_link(_opts) do
@@ -13,7 +13,7 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
   end
 
   def init(_opts) do
-    {:ok, %{free_proxies: @proxy_configuration_list, occupied_proxies: []}}
+    {:ok, %{free_proxies: ProxyService.get_proxies_credentials(), occupied_proxies: []}}
   end
 
   def get_proxy do

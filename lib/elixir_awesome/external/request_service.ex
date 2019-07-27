@@ -41,11 +41,9 @@ defmodule ElixirAwesome.External.RequestService do
     {:ok, enriched_sections_data}
   end
 
-  defp request_library_github_data(%{url: url} = library_data) do
-    with [_common, author, repo] <- Regex.run(@user_repo_regex, url),
-         {:ok, last_commit_date_time} <- request_last_commit(author, repo),
-         {:ok, stars_count} <- request_stars_count(author, repo) do
-      Map.merge(library_data, %{last_commit: last_commit_date_time, stars: stars_count})
+  def get_library_identity(%{url: url} = library_data) do
+    with [_common, author, repo] <- Regex.run(@user_repo_regex, url) do
+      Map.merge(library_data, %{author: author, repo: repo})
     else
       nil ->
         {:error, "Wrong url format #{inspect(url)}"}
@@ -55,9 +53,9 @@ defmodule ElixirAwesome.External.RequestService do
     end
   end
 
-  defp request_last_commit(author, repo) do
+  def request_last_commit({author, repo}, proxy_data) do
     with {:ok, %HTTPoison.Response{body: body}} <-
-           HTTPoison.get("https://api.github.com/repos/#{author}/#{repo}/commits", [], []),
+           perform_request("https://api.github.com/repos/#{author}/#{repo}/commits", proxy_data),
          {:ok, [last_commit | _]} <- Jason.decode(body),
          {:ok, naive_date_time} <-
            Timex.parse(last_commit["commit"]["committer"]["date"], @commit_time_format) do
@@ -68,14 +66,18 @@ defmodule ElixirAwesome.External.RequestService do
     end
   end
 
-  defp request_stars_count(author, repo) do
+  def request_stars_count({author, repo}, proxy_data) do
     with {:ok, %HTTPoison.Response{body: body}} <-
-           HTTPoison.get("https://api.github.com/repos/#{author}/#{repo}", [], []),
+           perform_request("https://api.github.com/repos/#{author}/#{repo}", proxy_data),
          {:ok, %{"stargazers_count" => stars_count}} <- Jason.decode(body) do
       {:ok, stars_count}
     else
       error ->
         {:error, "Unexpected error #{inspect(error)}"}
     end
+  end
+
+  defp perform_request(url, {host, port, proxy_user, proxy_password}) do
+    HTTPoison.get(url, proxy: {host, port}, proxy_auth: {proxy_user, proxy_password})
   end
 end
