@@ -107,7 +107,8 @@ defmodule ElixirAwesome.GithubData.Manager do
         %{
           processing_libraries_list: processing_libraries_list,
           workers_count: workers_count,
-          workers_list: workers_list
+          workers_list: workers_list,
+          processed: processed
         } = state
       ) do
     worker_id = Enum.find_index(workers_list, fn worker_pid -> worker_pid == process_pid end)
@@ -126,7 +127,8 @@ defmodule ElixirAwesome.GithubData.Manager do
        state
        | processing_libraries_list: new_processing_libraries_list,
          workers_count: workers_count - 1,
-         workers_list: new_workers_list
+         workers_list: new_workers_list,
+         processed: processed + 1
      }}
   end
 

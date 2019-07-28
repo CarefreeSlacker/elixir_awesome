@@ -17,6 +17,7 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
 
   alias ElixirAwesome.External.{DatabaseRecordsService, RequestService}
   alias ElixirAwesome.GithubData.Api
+  require Logger
   use GenServer, restart: :transient
 
   # Public API
@@ -31,11 +32,34 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
     {:ok, %{worker_id: worker_id, library_data: library_data, proxy: nil, stage: :initial}}
   end
 
-  def handle_info(:get_proxy, state) do
+  #  def handle_info(:get_proxy, state) do
+  #    case Api.get_free_proxy() do
+  #      {:ok, proxy} ->
+  #        schedule_stage(:get_last_commit, 100)
+  #        {:noreply, %{state | proxy: proxy, stage: :get_last_commit}}
+  #
+  #      {:error, :no_available_proxies} ->
+  #        schedule_stage(:get_proxy, 100)
+  #        {:noreply, %{state | stage: :get_proxy}}
+  #    end
+  #  end
+
+  def handle_info(:get_proxy, %{library_data: library_data} = state) do
     case Api.get_free_proxy() do
       {:ok, proxy} ->
-        schedule_stage(:get_last_commit, 100)
-        {:noreply, %{state | proxy: proxy, stage: :get_last_commit}}
+        schedule_stage(:create_or_update_record, 100)
+
+        {:noreply,
+         %{
+           state
+           | library_data:
+               Map.merge(library_data, %{
+                 stars: :rand.uniform(400),
+                 last_commit: NaiveDateTime.utc_now()
+               }),
+             proxy: proxy,
+             stage: :create_or_update_record
+         }}
 
       {:error, :no_available_proxies} ->
         schedule_stage(:get_proxy, 100)
@@ -60,8 +84,8 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
       {:noreply, %{state | library_data: enriched_library_data, stage: :get_stars}}
     else
       error ->
-        IO.puts(
-          "!!! request_worker error #{inspect(error)} during :get_last_commit\nState: #{
+        Logger.error(
+          "request_worker error #{inspect(error)} during :get_last_commit\nState: #{
             inspect(state)
           }"
         )
@@ -82,8 +106,8 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
       {:noreply, %{state | library_data: enriched_library_data, stage: :create_or_update_record}}
     else
       error ->
-        IO.puts(
-          "!!! request_worker error #{inspect(error)} during :get_stars\nState: #{inspect(state)}"
+        Logger.error(
+          "request_worker error #{inspect(error)} during :get_stars\nState: #{inspect(state)}"
         )
 
         schedule_stage(:get_stars, 100)
@@ -92,7 +116,6 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
   end
 
   def handle_info(:create_or_update_record, %{library_data: library_data} = state) do
-    DatabaseRecordsService.create_or_update_library(library_data)
     schedule_stage(:finish_work)
     {:noreply, %{state | stage: :finish_work}}
   end

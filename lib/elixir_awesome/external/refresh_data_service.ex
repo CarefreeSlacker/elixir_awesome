@@ -21,11 +21,13 @@ defmodule ElixirAwesome.External.RefreshDataService do
              db_sections_data,
              raw_sections_data
            ),
-         {:ok, _pid} <- Api.start_manager(Enum.take(libraries_data_with_section_id, 30)) do
-      {:ok,
-       "Request successful. Requesting successful libraries data #{
-         inspect(Enum.take(libraries_data_with_section_id, 30))
-       }"}
+         {:ok, _pid} <- Api.start_manager(libraries_data_with_section_id) do
+      {
+        :ok,
+        "Request successful. Requesting successful libraries data #{
+          inspect(libraries_data_with_section_id)
+        }"
+      }
     else
       {:error, reason} -> {:error, reason}
     end

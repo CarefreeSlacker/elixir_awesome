@@ -24,7 +24,7 @@
       </h2>
       <p><%= section.comment %></p>
       <table class="table">
-        <%= Enum.map(section.libraries, fn library -> %>
+        <%= Enum.sort_by(section.libraries, & &1.name) |> Enum.map(fn library -> %>
           <tr>
             <td>
               <a href="<%= library.url %>">

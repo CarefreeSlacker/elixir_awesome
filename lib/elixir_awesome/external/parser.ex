@@ -84,12 +84,20 @@ defmodule ElixirAwesome.External.Parser do
         )
         |> xpath(~x"//item/paragraph"l)
         |> Enum.map(fn section_library ->
-          [raw_comment | name] = xpath(section_library, ~x"//text/text()"ls)
+          name =
+            xpath(section_library, ~x"//link[1]/text/text()"ls)
+            |> Enum.join("")
+
+          comment =
+            xpath(section_library, ~x"//text/text()"ls)
+            |> Enum.join("")
+            |> String.replace(name, "")
+            |> String.replace(" - ", "")
 
           %{
-            name: Enum.join(name, ""),
+            name: name,
             url: xpath(section_library, ~x"//link/@destination"s),
-            comment: String.replace(raw_comment, " - ", "")
+            comment: comment
           }
         end)
 
