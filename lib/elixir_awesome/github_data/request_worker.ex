@@ -32,40 +32,40 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
     {:ok, %{worker_id: worker_id, library_data: library_data, proxy: nil, stage: :initial}}
   end
 
-  #  def handle_info(:get_proxy, state) do
-  #    case Api.get_free_proxy() do
-  #      {:ok, proxy} ->
-  #        schedule_stage(:get_last_commit, 100)
-  #        {:noreply, %{state | proxy: proxy, stage: :get_last_commit}}
-  #
-  #      {:error, :no_available_proxies} ->
-  #        schedule_stage(:get_proxy, 100)
-  #        {:noreply, %{state | stage: :get_proxy}}
-  #    end
-  #  end
-
-  def handle_info(:get_proxy, %{library_data: library_data} = state) do
+  def handle_info(:get_proxy, state) do
     case Api.get_free_proxy() do
       {:ok, proxy} ->
-        schedule_stage(:create_or_update_record, 100)
-
-        {:noreply,
-         %{
-           state
-           | library_data:
-               Map.merge(library_data, %{
-                 stars: :rand.uniform(400),
-                 last_commit: NaiveDateTime.utc_now()
-               }),
-             proxy: proxy,
-             stage: :create_or_update_record
-         }}
+        schedule_stage(:get_last_commit, 100)
+        {:noreply, %{state | proxy: proxy, stage: :get_last_commit}}
 
       {:error, :no_available_proxies} ->
         schedule_stage(:get_proxy, 100)
         {:noreply, %{state | stage: :get_proxy}}
     end
   end
+
+  #  def handle_info(:get_proxy, %{library_data: library_data} = state) do
+  #    case Api.get_free_proxy() do
+  #      {:ok, proxy} ->
+  #        schedule_stage(:create_or_update_record, 100)
+  #
+  #        {:noreply,
+  #         %{
+  #           state
+  #           | library_data:
+  #               Map.merge(library_data, %{
+  #                 stars: :rand.uniform(400),
+  #                 last_commit: NaiveDateTime.utc_now()
+  #               }),
+  #             proxy: proxy,
+  #             stage: :create_or_update_record
+  #         }}
+  #
+  #      {:error, :no_available_proxies} ->
+  #        schedule_stage(:get_proxy, 100)
+  #        {:noreply, %{state | stage: :get_proxy}}
+  #    end
+  #  end
 
   def handle_info(:get_last_commit, %{library_data: library_data, proxy: proxy} = state) do
     with %{author: author, repo: repo} = updated_library_data <-

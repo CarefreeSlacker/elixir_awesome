@@ -9,6 +9,7 @@ defmodule ElixirAwesome.External.RequestService do
   @await_between_requests_interval Application.get_env(:elixir_awesome, :github_data)[
                                      :between_requests_interval
                                    ]
+  @basic_authentication_credentials Application.get_env(:elixir_awesome, :github_credentials)
 
   @doc """
   Request data and return {:ok, markdown_file_as_string} | {:error, reason}
@@ -75,9 +76,17 @@ defmodule ElixirAwesome.External.RequestService do
   end
 
   defp perform_request(url, {host, port, proxy_user, proxy_password}) do
-    HTTPoison.request(:get, url, "", [],
+    HTTPoison.request(
+      :get,
+      url,
+      "",
+      [basic_authentication_header(@basic_authentication_credentials)],
       proxy: {host, port},
       proxy_auth: {proxy_user, proxy_password}
     )
+  end
+
+  defp basic_authentication_header(username: username, password: password) do
+    {"Authorization", "Basic #{Base.encode64("#{username}:#{password}")}"}
   end
 end

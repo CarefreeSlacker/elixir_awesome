@@ -46,14 +46,32 @@ Github.
 * Получение данных из GitHub осуществляется с помощью REST API https://developer.github.com/v3/
 * Для стилей используется Bootstrap
 
-## Gjluj
+## Подготовка
 
 **Подготовка Backend**
 
-* mix deps.get
-* mix ecto.setup
+1. mix deps.get
+2. mix ecto.setup
+3. Поместить `secret.exs` в папку конфигурации (Смотри пункт "Обход ограничения на колчество запросов")
 
 **Подготовка Frontend**
 
 * cd assets
 * npm i
+
+**(!)** Обход ограничения на колчество запросов
+
+В этой задаче есть один подводным камень: нужно сделать порядка 2400 запросов к API GitHub.
+Есть ограничение на количество запросов с одного IP адреса https://developer.github.com/v3/#rate-limiting
+Если пользователь не авторизованный, то 60 запросов, если авторизованный - 5000.
+Поэтому необходимо добавить свои авторизационные данные в папку конфигураций в файл: `secret.exs` в виде:
+
+```elixir
+use Mix.Config
+
+config :elixir_awesome, :github_credentials,
+  username: "<username>",
+  password: "<password>"
+```
+
+Используется базовая авторизация.
