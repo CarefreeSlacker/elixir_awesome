@@ -5,24 +5,26 @@ defmodule ElixirAwesome.External.DatabaseRecordsService do
 
   alias ElixirAwesome.DomainModel.Context
 
-  @doc """
-  Create or update libraries by data given in section_data
-  """
-  @spec create_or_update(list(map)) ::
-          {:ok, {{integer, integer}, {integer, integer}}} | {:error, term}
-  def create_or_update(%{name: name, libraries: libraries} = section_data) do
-    %{id: section_id} =
-      create_if_necessary(section_data, &Context.section_by_name/1, &Context.create_section/1)
+  def create_sections(sections_data) do
+    section_db_records =
+      sections_data
+      |> Enum.map(fn section_data -> create_or_update_section(section_data) end)
 
-    libraries
-    |> Enum.map(fn %{name: name} = library_attrs ->
-      # TODO except section_id remove merging fields
-      library_attrs
-      |> Map.merge(%{section_id: section_id, stars: 0, last_commit: NaiveDateTime.utc_now()})
-      |> create_if_necessary(&Context.library_by_name/1, &Context.create_library/1)
-    end)
+    {:ok, section_db_records}
+  end
 
-    {:ok, {{0, 0}, {0, 0}}}
+  def add_section_id_to_libraries_data(section_db_records, raw_sections_data) do
+    libraries_data_with_section_id =
+      section_db_records
+      |> Enum.zip(raw_sections_data)
+      |> Enum.reduce([], fn {%{id: section_id}, %{libraries: libraries_data}}, acc ->
+        acc ++
+          Enum.map(libraries_data, fn library_data ->
+            Map.put(library_data, :section_id, section_id)
+          end)
+      end)
+
+    {:ok, libraries_data_with_section_id}
   end
 
   def create_or_update_section(section_data) do
@@ -30,7 +32,7 @@ defmodule ElixirAwesome.External.DatabaseRecordsService do
       section_data,
       &Context.section_by_name/1,
       &Context.create_section/1,
-      &Context.update_section/1
+      &Context.update_section/2
     )
   end
 
@@ -39,7 +41,7 @@ defmodule ElixirAwesome.External.DatabaseRecordsService do
       library_data,
       &Context.library_by_name/1,
       &Context.create_library/1,
-      &Context.update_library/1
+      &Context.update_library/2
     )
   end
 

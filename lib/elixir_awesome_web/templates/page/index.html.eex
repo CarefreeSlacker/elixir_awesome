@@ -14,6 +14,9 @@
   <div>
     <h1 class="h1">Sections</h1>
   </div>
+  <div>
+    <p><%= @processed_status %></p>
+  </div>
   <%= Enum.map(@sections, fn section -> %>
       <h2 class="h2" id="<%= name_to_link_id(section.name) %>">
         <a href="#table-of-content" class="btn" title="To tables of content">&#x2B06;</a>

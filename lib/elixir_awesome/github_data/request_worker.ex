@@ -47,13 +47,17 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
     with %{author: author, repo: repo} = updated_library_data <-
            RequestService.get_library_identity(library_data),
          {:ok, last_commit_date_time} <-
-           RequestService.request_last_commit({author, repo}, proxy: proxy) do
-      library_data_with_commit =
-        Map.put(updated_library_data, :last_commit, last_commit_date_time)
+           RequestService.request_last_commit({author, repo}, proxy) do
+      enriched_library_data =
+        Map.merge(updated_library_data, %{
+          last_commit: last_commit_date_time,
+          repo: repo,
+          author: author
+        })
 
       :timer.sleep(@await_between_requests_interval)
       schedule_stage(:get_stars, 100)
-      {:noreply, %{state | library_data: library_data_with_commit}}
+      {:noreply, %{state | library_data: enriched_library_data, stage: :get_stars}}
     else
       error ->
         IO.puts(
@@ -63,20 +67,19 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
         )
 
         schedule_stage(:get_last_commit, 100)
+        {:noreply, state}
     end
-
-    {:noreply, state}
   end
 
   def handle_info(
         :get_stars,
         %{library_data: %{author: author, repo: repo} = library_data, proxy: proxy} = state
       ) do
-    with {:ok, stars_count} <- RequestService.request_stars_count({author, repo}, proxy: proxy) do
-      library_data_with_commit = Map.put(library_data, :stars, stars_count)
+    with {:ok, stars_count} <- RequestService.request_stars_count({author, repo}, proxy) do
+      enriched_library_data = Map.put(library_data, :stars, stars_count)
       :timer.sleep(@await_between_requests_interval)
       schedule_stage(:create_or_update_record, 100)
-      {:noreply, %{state | library_data: library_data_with_commit}}
+      {:noreply, %{state | library_data: enriched_library_data, stage: :create_or_update_record}}
     else
       error ->
         IO.puts(
@@ -84,15 +87,14 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
         )
 
         schedule_stage(:get_stars, 100)
+        {:noreply, state}
     end
-
-    {:noreply, state}
   end
 
   def handle_info(:create_or_update_record, %{library_data: library_data} = state) do
     DatabaseRecordsService.create_or_update_library(library_data)
-    schedule_stage(:finish_work, 100)
-    {:noreply, state}
+    schedule_stage(:finish_work)
+    {:noreply, %{state | stage: :finish_work}}
   end
 
   def handle_info(:finish_work, state) do

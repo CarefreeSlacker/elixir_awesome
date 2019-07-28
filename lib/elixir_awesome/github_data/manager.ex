@@ -17,8 +17,16 @@ defmodule ElixirAwesome.GithubData.Manager do
   end
 
   def get_processed do
-    %{processed: processed, total: total} = GenServer.cast(__MODULE__, :get_state)
-    {:ok, "#{processed}/#{total}"}
+    __MODULE__
+    |> GenServer.whereis()
+    |> case do
+      nil ->
+        {:error, "No refreshing status"}
+
+      _gen_server_pid ->
+        %{processed: processed, total: total} = GenServer.call(__MODULE__, :get_state)
+        {:ok, "#{processed}/#{total}"}
+    end
   end
 
   # Callbacks
@@ -38,7 +46,7 @@ defmodule ElixirAwesome.GithubData.Manager do
     }
   end
 
-  def handle_cast(:get_state, _from, state) do
+  def handle_call(:get_state, _from, state) do
     {:reply, state, state}
   end
 

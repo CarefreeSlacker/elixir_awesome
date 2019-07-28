@@ -10,7 +10,7 @@ defmodule ElixirAwesome.GithubData.ProxyService do
     |> Enum.map(fn proxy_data ->
       [host, port, user, password] = String.split(proxy_data, ":")
       {number_port, ""} = Integer.parse(port)
-      {host, port, user, password}
+      {host, number_port, user, password}
     end)
   end
 end
