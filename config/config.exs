@@ -40,8 +40,7 @@ config :elixir_awesome, :github_data,
     "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-158.46.158.145:lrzxs947e0j7",
     "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-181.214.181.102:lrzxs947e0j7",
     "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-178.171.113.127:lrzxs947e0j7"
-  ],
-  between_requests_interval: 5_000
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

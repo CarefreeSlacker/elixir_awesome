@@ -6,9 +6,6 @@ defmodule ElixirAwesome.External.RequestService do
   require Logger
 
   @file_url Application.get_env(:elixir_awesome, :external)[:readme_file_url]
-  @await_between_requests_interval Application.get_env(:elixir_awesome, :github_data)[
-                                     :between_requests_interval
-                                   ]
   @basic_authentication_credentials Application.get_env(:elixir_awesome, :github_credentials)
 
   @doc """
@@ -54,7 +51,6 @@ defmodule ElixirAwesome.External.RequestService do
 
   defp get_last_commit(decoded_body, proxy_data) do
     with %{"url" => url} <- decoded_body,
-         :ok <- :timer.sleep(@await_between_requests_interval),
          {:ok, %HTTPoison.Response{body: body}} <- perform_request(url, proxy_data),
          {:ok, new_decoded_body} <- Jason.decode(body) do
       get_last_commit(new_decoded_body, proxy_data)
@@ -67,11 +63,31 @@ defmodule ElixirAwesome.External.RequestService do
   def request_stars_count({author, repo}, proxy_data) do
     with {:ok, %HTTPoison.Response{body: body}} <-
            perform_request("https://api.github.com/repos/#{author}/#{repo}", proxy_data),
-         {:ok, %{"stargazers_count" => stars_count}} <- Jason.decode(body) do
+         {:ok, decoded_body} <- Jason.decode(body),
+         {:ok, stars_count} <- get_stars_count(decoded_body, proxy_data, 0) do
       {:ok, stars_count}
     else
       error ->
         {:error, "Unexpected error #{inspect(error)}"}
+    end
+  end
+
+  defp get_stars_count(decoded_body, proxy_data, attempts) do
+    with true <- attempts < 5,
+         %{"url" => url, "message" => "Moved Permanently"} <- decoded_body,
+         {:ok, %HTTPoison.Response{body: body}} <- perform_request(url, proxy_data),
+         {:ok, new_decoded_body} <- Jason.decode(body |> String.replace("\\\\\\", "\\")) do
+      get_stars_count(new_decoded_body, proxy_data, attempts + 1)
+    else
+      %{"stargazers_count" => stars_count} ->
+        {:ok, stars_count}
+
+      false ->
+        {:error,
+         "Too many attempts #{inspect(attempts)}\nKeys #{inspect(Map.keys(decoded_body))}"}
+
+      error ->
+        {:error, error}
     end
   end
 

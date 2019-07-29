@@ -11,9 +11,6 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
     :create_or_update_record,
     :finish_work
   ]
-  @await_between_requests_interval Application.get_env(:elixir_awesome, :github_data)[
-                                     :between_requests_interval
-                                   ]
 
   alias ElixirAwesome.External.{DatabaseRecordsService, RequestService}
   alias ElixirAwesome.GithubData.Api
@@ -79,7 +76,6 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
           author: author
         })
 
-      :timer.sleep(@await_between_requests_interval)
       schedule_stage(:get_stars, 100)
       {:noreply, %{state | library_data: enriched_library_data, stage: :get_stars}}
     else
@@ -90,7 +86,7 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
           }"
         )
 
-        schedule_stage(:get_last_commit, 100)
+        schedule_stage(:finish_work, 100)
         {:noreply, state}
     end
   end
@@ -101,7 +97,6 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
       ) do
     with {:ok, stars_count} <- RequestService.request_stars_count({author, repo}, proxy) do
       enriched_library_data = Map.put(library_data, :stars, stars_count)
-      :timer.sleep(@await_between_requests_interval)
       schedule_stage(:create_or_update_record, 100)
       {:noreply, %{state | library_data: enriched_library_data, stage: :create_or_update_record}}
     else
@@ -110,12 +105,13 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
           "request_worker error #{inspect(error)} during :get_stars\nState: #{inspect(state)}"
         )
 
-        schedule_stage(:get_stars, 100)
+        schedule_stage(:finish_work, 100)
         {:noreply, state}
     end
   end
 
   def handle_info(:create_or_update_record, %{library_data: library_data} = state) do
+    DatabaseRecordsService.create_or_update_library(library_data)
     schedule_stage(:finish_work)
     {:noreply, %{state | stage: :finish_work}}
   end
