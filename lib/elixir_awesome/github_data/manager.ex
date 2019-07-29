@@ -67,7 +67,7 @@ defmodule ElixirAwesome.GithubData.Manager do
       ) do
     cond do
       workers_count >= @max_workers_count ->
-        schedule_stage(:working, 1000)
+        schedule_stage(:working)
         {:noreply, state}
 
       workers_count == 0 and length(libraries_list) == 0 ->
@@ -79,7 +79,7 @@ defmodule ElixirAwesome.GithubData.Manager do
              [library_data | rest_libraries] <- libraries_list,
              {:ok, pid} <- Api.start_request_worker(worker_id, library_data) do
           Process.monitor(pid)
-          schedule_stage(:working, 1000)
+          schedule_stage(:working, 50)
 
           {:noreply,
            %{
@@ -91,7 +91,7 @@ defmodule ElixirAwesome.GithubData.Manager do
            }}
         else
           _ ->
-            schedule_stage(:working, 1000)
+            schedule_stage(:working, 50)
             {:noreply, state}
         end
     end
@@ -132,7 +132,7 @@ defmodule ElixirAwesome.GithubData.Manager do
      }}
   end
 
-  def schedule_stage(stage, timeout \\ 100) when stage in @stages_white_list do
+  def schedule_stage(stage, timeout \\ 0) when stage in @stages_white_list do
     GenServer.whereis(__MODULE__)
     |> Process.send_after(stage, timeout)
   end

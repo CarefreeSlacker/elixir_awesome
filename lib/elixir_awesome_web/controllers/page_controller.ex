@@ -2,20 +2,28 @@ defmodule ElixirAwesomeWeb.PageController do
   use ElixirAwesomeWeb, :controller
   alias ElixirAwesome.DomainModel.Context
   alias ElixirAwesome.GithubData.Api
+  alias ElixirAwesome.External.RefreshDataService
 
   def index(conn, params) do
     sections_with_libraries =
       Context.sections_with_libraries(%{min_stars: Map.get(params, "min_stars")})
 
-    processed_status =
-      case Api.get_processed_status() do
-        {:ok, processed_status} -> processed_status
-        {:error, reason} -> "No processing"
+    {processed_count, processing} =
+      case Api.get_get_processed_count() do
+        {:ok, count} -> {count, true}
+        {:error, reason} -> {"No processing", false}
       end
 
     render(conn, "index.html",
       sections: sections_with_libraries,
-      processed_status: processed_status
+      processed_count: processed_count,
+      processing: processing
     )
+  end
+
+  def update(conn, _params) do
+    RefreshDataService.perform()
+
+    redirect(conn, to: "/")
   end
 end

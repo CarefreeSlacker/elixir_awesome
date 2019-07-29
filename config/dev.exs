@@ -70,7 +70,6 @@ config :phoenix, :plug_init_mode, :runtime
 config :elixir_awesome, ElixirAwesome.Repo,
   username: "postgres",
   password: "postgres",
-#  database: "elixir_awesome_dev",
-  database: "elixir_awesome_dev_new",
+  database: "elixir_awesome_dev",
   hostname: "localhost",
   pool_size: 10

@@ -21,8 +21,8 @@ defmodule ElixirAwesome.GithubData.Api do
   @doc """
   Return requesting status in format {:ok, "downloaded_count/total_count"}.
   """
-  @spec get_processed_status :: {:ok, binary} | {:error, binary}
-  def get_processed_status do
+  @spec get_get_processed_count :: {:ok, binary} | {:error, binary}
+  def get_get_processed_count do
     Manager.get_processed()
   end
 

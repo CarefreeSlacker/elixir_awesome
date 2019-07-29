@@ -17,6 +17,7 @@ defmodule ElixirAwesomeWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/start_refreshing", PageController, :update
   end
 
   # Other scopes may use custom stacks.

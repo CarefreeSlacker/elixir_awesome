@@ -52,17 +52,18 @@ defmodule ElixirAwesome.DomainModel.Context do
   def sections_with_libraries(search_params \\ %{})
 
   def sections_with_libraries(%{min_stars: min_stars}) when not is_nil(min_stars) do
-    select_section_with_libraries_query()
-    |> where([s, l], l.stars >= ^min_stars)
+    from(
+      s in Section,
+      join: l in assoc(s, :libraries),
+      where: l.stars >= ^min_stars,
+      preload: [libraries: l],
+      distinct: s.id,
+      order_by: s.name
+    )
     |> Repo.all()
   end
 
   def sections_with_libraries(_search_params) do
-    select_section_with_libraries_query()
-    |> Repo.all()
-  end
-
-  defp select_section_with_libraries_query do
     from(
       s in Section,
       join: l in assoc(s, :libraries),
@@ -70,6 +71,7 @@ defmodule ElixirAwesome.DomainModel.Context do
       distinct: s.id,
       order_by: s.name
     )
+    |> Repo.all()
   end
 
   def section_by_name(name) do
