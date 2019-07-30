@@ -1,8 +1,8 @@
 defmodule ElixirAwesomeWeb.PageController do
   use ElixirAwesomeWeb, :controller
   alias ElixirAwesome.DomainModel.Context
-  alias ElixirAwesome.GithubData.Api
   alias ElixirAwesome.External.RefreshDataService
+  alias ElixirAwesome.GithubData.Api
 
   def index(conn, params) do
     sections_with_libraries =

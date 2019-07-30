@@ -30,7 +30,7 @@ defmodule ElixirAwesome.DomainModel.ContextTest do
       {:ok, library} = Factory.create(:library)
 
       new_name = "NewName"
-      new_stars = :rand.uniform(99999)
+      new_stars = :rand.uniform(99_999)
       new_attrs = %{name: new_name, stars: new_stars}
 
       assert {:ok, %Library{name: ^new_name, stars: ^new_stars}} =

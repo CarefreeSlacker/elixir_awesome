@@ -79,18 +79,20 @@ defmodule ElixirAwesome.External.Parser do
     sections_data
     |> Enum.map(fn %{name: section_name} = section_data ->
       section_libraries =
-        xpath(
-          parsed_xml,
+        parsed_xml
+        |> xpath(
           ~x"#{libraries_section_selector(section_name)}/following-sibling::paragraph[1]/following-sibling::list[1]"
         )
         |> xpath(~x"//item/paragraph"l)
         |> Enum.map(fn section_library ->
           name =
-            xpath(section_library, ~x"//link[1]/text/text()"ls)
+            section_library
+            |> xpath(~x"//link[1]/text/text()"ls)
             |> Enum.join("")
 
           comment =
-            xpath(section_library, ~x"//text/text()"ls)
+            section_library
+            |> xpath(~x"//text/text()"ls)
             |> Enum.join("")
             |> String.replace(name, "")
             |> String.replace(" - ", "")

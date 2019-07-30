@@ -70,7 +70,7 @@ defmodule ElixirAwesome.GithubData.Manager do
         schedule_stage(:working)
         {:noreply, state}
 
-      workers_count == 0 and length(libraries_list) == 0 ->
+      workers_count == 0 and libraries_list == [] ->
         schedule_stage(:finish_work)
         {:noreply, state}
 
@@ -133,7 +133,8 @@ defmodule ElixirAwesome.GithubData.Manager do
   end
 
   def schedule_stage(stage, timeout \\ 0) when stage in @stages_white_list do
-    GenServer.whereis(__MODULE__)
+    __MODULE__
+    |> GenServer.whereis()
     |> Process.send_after(stage, timeout)
   end
 end

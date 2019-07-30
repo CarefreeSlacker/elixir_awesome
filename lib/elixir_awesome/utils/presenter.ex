@@ -8,7 +8,8 @@ defmodule ElixirAwesome.Utils.Presenter do
   """
   @spec days_between(NaiveDateTime.t(), NaiveDateTime.t()) :: integer
   def days_between(first_date, second_date) do
-    NaiveDateTime.diff(first_date, second_date)
+    first_date
+    |> NaiveDateTime.diff(second_date)
     |> abs()
     |> (fn seconds_count -> div(seconds_count, 24 * 60 * 60) end).()
   end

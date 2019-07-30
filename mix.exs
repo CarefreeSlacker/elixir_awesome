@@ -52,7 +52,9 @@ defmodule ElixirAwesome.MixProject do
       {:timex, "~> 3.5"},
       # Testing
       {:faker, "~> 0.12", only: :test},
-      {:mock, "~> 0.3.0", only: :test}
+      {:mock, "~> 0.3.0", only: :test},
+      # Code quality
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
 
