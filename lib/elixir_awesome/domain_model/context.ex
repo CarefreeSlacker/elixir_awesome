@@ -52,26 +52,32 @@ defmodule ElixirAwesome.DomainModel.Context do
   def sections_with_libraries(search_params \\ %{})
 
   def sections_with_libraries(%{min_stars: min_stars}) when not is_nil(min_stars) do
+    libraries_query = from(l in Library, where: l.stars >= ^min_stars, order_by: l.name)
+
     from(
       s in Section,
       join: l in assoc(s, :libraries),
       where: l.stars >= ^min_stars,
-      preload: [libraries: l],
-      distinct: s.id,
-      order_by: s.name
+      order_by: l.name,
+      preload: [libraries: ^libraries_query],
+      distinct: s.id
     )
     |> Repo.all()
+    |> Enum.sort_by(& &1.name)
   end
 
   def sections_with_libraries(_search_params) do
+    libraries_query = from(l in Library, order_by: l.name)
+
     from(
       s in Section,
       join: l in assoc(s, :libraries),
-      preload: :libraries,
-      distinct: s.id,
-      order_by: s.name
+      order_by: l.name,
+      preload: [libraries: ^libraries_query],
+      distinct: s.id
     )
     |> Repo.all()
+    |> Enum.sort_by(& &1.name)
   end
 
   def section_by_name(name) do

@@ -1,4 +1,4 @@
-defmodule ElixirAwesome.Factories.Library do
+defmodule ElixirAwesome.Factories.LibraryFactory do
   @moduledoc false
 
   alias ElixirAwesome.Repo
@@ -28,7 +28,7 @@ defmodule ElixirAwesome.Factories.Library do
        do: attrs
 
   defp create_section_if_does_not_exist(attrs) do
-    %{id: section_id} = Factory.create(:section)
+    {:ok, %{id: section_id}} = Factory.create(:section)
     Map.put(attrs, :section_id, section_id)
   end
 end

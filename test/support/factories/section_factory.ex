@@ -1,4 +1,4 @@
-defmodule ElixirAwesome.Factories.Section do
+defmodule ElixirAwesome.Factories.SectionFactory do
   @moduledoc false
 
   alias ElixirAwesome.Repo

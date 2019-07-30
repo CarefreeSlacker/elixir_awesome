@@ -3,23 +3,23 @@ defmodule ElixirAwesome.Testing.Factory do
   Contains common API for creating models
   """
 
-  alias ElixirAwesome.Factories.{Library, Section}
+  alias ElixirAwesome.Factories.{LibraryFactory, SectionFactory}
 
   def create(_model, attrs \\ %{})
 
   def create(:library, attrs) do
-    Library.create(attrs)
+    LibraryFactory.create(attrs)
   end
 
   def create(:section, attrs) do
-    Section.create(attrs)
+    SectionFactory.create(attrs)
   end
 
   def default_attrs(:library) do
-    Library.default_attrs()
+    LibraryFactory.default_attrs()
   end
 
   def default_attrs(:section) do
-    Section.default_attrs()
+    SectionFactory.default_attrs()
   end
 end
