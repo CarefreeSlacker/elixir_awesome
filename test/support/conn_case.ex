@@ -20,6 +20,7 @@ defmodule ElixirAwesomeWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       alias ElixirAwesomeWeb.Router.Helpers, as: Routes
+      alias ElixirAwesome.Testing.Factory
 
       # The default endpoint for testing
       @endpoint ElixirAwesomeWeb.Endpoint

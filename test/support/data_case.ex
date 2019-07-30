@@ -22,6 +22,8 @@ defmodule ElixirAwesome.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import ElixirAwesome.DataCase
+
+      alias ElixirAwesome.Testing.Factory
     end
   end
 

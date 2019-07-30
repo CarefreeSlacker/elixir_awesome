@@ -49,7 +49,9 @@ defmodule ElixirAwesome.MixProject do
       {:sweet_xml, "~> 0.3.0"},
       {:cmark, "~> 0.7"},
       {:httpoison, "~> 1.5.1"},
-      {:timex, "~> 3.5"}
+      {:timex, "~> 3.5"},
+      # Testing
+      {:faker, "~> 0.12", only: :test}
     ]
   end
 
