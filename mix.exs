@@ -51,7 +51,8 @@ defmodule ElixirAwesome.MixProject do
       {:httpoison, "~> 1.5.1"},
       {:timex, "~> 3.5"},
       # Testing
-      {:faker, "~> 0.12", only: :test}
+      {:faker, "~> 0.12", only: :test},
+      {:mock, "~> 0.3.0", only: :test}
     ]
   end
 

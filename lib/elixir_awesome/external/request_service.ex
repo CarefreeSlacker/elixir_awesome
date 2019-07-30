@@ -6,7 +6,6 @@ defmodule ElixirAwesome.External.RequestService do
   require Logger
 
   @file_url Application.get_env(:elixir_awesome, :external)[:readme_file_url]
-  @basic_authentication_credentials Application.get_env(:elixir_awesome, :github_credentials)
 
   @doc """
   Request data and return {:ok, markdown_file_as_string} | {:error, reason}
@@ -20,21 +19,36 @@ defmodule ElixirAwesome.External.RequestService do
     end
   end
 
-  @user_repo_regex ~r/.+\/([^\/]+)\/([^\/]+)$/
-  @commit_time_format "{YYYY}-{M}-{D}T{h24}:{m}:{s}Z"
+  @user_repo_regex ~r/.+com\/([^\/]+)\/([^\/]+)$/
 
+  @doc """
+  Gets library data, parse :url field and merge field to library data
+  """
+  @spec get_library_identity(map()) :: {:ok, map} | {:error, binary}
   def get_library_identity(%{url: url} = library_data) do
-    with [_common, author, repo] <- Regex.run(@user_repo_regex, url) do
-      Map.merge(library_data, %{author: author, repo: repo})
-    else
+    case Regex.run(@user_repo_regex, url) do
+      [_common, author, repo] ->
+        {:ok, Map.merge(library_data, %{author: author, repo: repo})}
+
       nil ->
         {:error, "Wrong url format #{inspect(url)}"}
-
-      {:error, reason} ->
-        {:error, reason}
     end
   end
 
+  def get_library_identity(_library_data),
+    do: {:error, "Library params does not have URL attribute"}
+
+  @commit_time_format "{YYYY}-{M}-{D}T{h24}:{m}:{s}Z"
+
+  @doc """
+  Perform request with given proxy configurations and basic authentication.
+  Decode body.
+  If repository moved, perform one more request.
+  Then parse commit and return {:ok, NaiveDateTime}.
+  If any error happen, return {:error, binary}.
+  """
+  @spec request_last_commit({binary, binary}, {binary, integer, binary, binary}) ::
+          {:ok, NaiveDateTime.t()} | {:error, binary}
   def request_last_commit({author, repo}, proxy_data) do
     with {:ok, %HTTPoison.Response{body: body}} <-
            perform_request("https://api.github.com/repos/#{author}/#{repo}/commits", proxy_data),
@@ -60,6 +74,17 @@ defmodule ElixirAwesome.External.RequestService do
     end
   end
 
+  @max_commit_request_attempts 4
+
+  @doc """
+  Perform request with given proxy configurations and basic authentication.
+  Decode body.
+  If repository moved, perform one more request.
+  Then parse commit and return {:ok, NaiveDateTime}.
+  If any error happen, return {:error, binary}.
+  """
+  @spec request_last_commit({binary, binary}, {binary, integer, binary, binary}) ::
+          {:ok, NaiveDateTime.t()} | {:error, binary}
   def request_stars_count({author, repo}, proxy_data) do
     with {:ok, %HTTPoison.Response{body: body}} <-
            perform_request("https://api.github.com/repos/#{author}/#{repo}", proxy_data),
@@ -73,7 +98,7 @@ defmodule ElixirAwesome.External.RequestService do
   end
 
   defp get_stars_count(decoded_body, proxy_data, attempts) do
-    with true <- attempts < 5,
+    with true <- attempts < @max_commit_request_attempts,
          %{"url" => url, "message" => "Moved Permanently"} <- decoded_body,
          {:ok, %HTTPoison.Response{body: body}} <- perform_request(url, proxy_data),
          {:ok, new_decoded_body} <- Jason.decode(body |> String.replace("\\\\\\", "\\")) do
@@ -90,6 +115,8 @@ defmodule ElixirAwesome.External.RequestService do
         {:error, error}
     end
   end
+
+  @basic_authentication_credentials Application.get_env(:elixir_awesome, :github_credentials)
 
   defp perform_request(url, {host, port, proxy_user, proxy_password}) do
     HTTPoison.request(

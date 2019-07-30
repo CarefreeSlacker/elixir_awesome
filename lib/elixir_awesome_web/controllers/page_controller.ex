@@ -11,7 +11,7 @@ defmodule ElixirAwesomeWeb.PageController do
     {processed_count, processing} =
       case Api.get_get_processed_count() do
         {:ok, count} -> {count, true}
-        {:error, reason} -> {"No processing", false}
+        {:error, _reason} -> {"No processing", false}
       end
 
     render(conn, "index.html",

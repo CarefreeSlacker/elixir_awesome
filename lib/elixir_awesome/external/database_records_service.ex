@@ -61,12 +61,4 @@ defmodule ElixirAwesome.External.DatabaseRecordsService do
         record
     end
   end
-
-  @doc """
-  Delete libraries by data given in sections_data
-  """
-  @spec delete(list(map)) :: {:ok, {integer, integer}} | {:error, term}
-  def delete(section_data) do
-    {:ok, {0, 0}}
-  end
 end

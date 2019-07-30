@@ -1,8 +1,7 @@
 defmodule ElixirAwesome.Factories.SectionFactory do
   @moduledoc false
 
-  alias ElixirAwesome.Repo
-  alias ElixirAwesome.DomainModel.{Section, Context}
+  alias ElixirAwesome.DomainModel.Context
 
   def create(attrs \\ %{}) do
     default_attrs()

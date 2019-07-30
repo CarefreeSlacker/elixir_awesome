@@ -27,7 +27,7 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
   # Callbacks
   def handle_call(
         :get_proxy,
-        {from_pid, from_reference},
+        {from_pid, _from_reference},
         %{free_proxies: proxies_list, occupied_proxies: occupied_proxies} = status
       ) do
     case proxies_list do

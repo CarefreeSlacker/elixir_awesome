@@ -8,7 +8,7 @@ defmodule ElixirAwesome.GithubData.Api do
   This module contains functions for managing and monitoring data requesting process.
   """
 
-  alias ElixirAwesome.GithubData.{Manager, ProxyManager, RequestWorker, Supervisor}
+  alias ElixirAwesome.GithubData.{Manager, ProxyManager, Supervisor}
 
   @doc """
   Start worker those manage requesting process.
@@ -48,13 +48,5 @@ defmodule ElixirAwesome.GithubData.Api do
   @spec get_free_proxy :: {:ok, binary} | {:error, :no_available_proxies}
   def get_free_proxy do
     ProxyManager.get_proxy()
-  end
-
-  @doc """
-  Free given proxy.
-  """
-  @spec free_proxy(binary) :: {:ok, pid} | {:error, atom}
-  def free_proxy(binary) do
-    {:ok, "0/0"}
   end
 end

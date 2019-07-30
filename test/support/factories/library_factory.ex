@@ -1,12 +1,11 @@
 defmodule ElixirAwesome.Factories.LibraryFactory do
   @moduledoc false
 
-  alias ElixirAwesome.Repo
-  alias ElixirAwesome.DomainModel.{Context, Library}
+  alias ElixirAwesome.DomainModel.Context
   alias ElixirAwesome.Testing.Factory
 
   def create(attrs) do
-    default_attrs
+    default_attrs()
     |> Map.merge(attrs)
     |> create_section_if_does_not_exist()
     |> Context.create_library()
