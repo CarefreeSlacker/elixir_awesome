@@ -27,7 +27,7 @@ defmodule ElixirAwesome.External.Parser do
   ]
   ```
   """
-  @spec perform(binary) :: {:ok, list(map)} | {:error, term}
+  @spec perform(binary) :: {:ok, list(map)} | {:error, :invalid_xml}
   def perform(markdown) do
     with parsed_xml <- markdown_to_parsed_xml(markdown),
          sections_data when sections_data != [] <- get_sections_data(parsed_xml),
@@ -35,7 +35,7 @@ defmodule ElixirAwesome.External.Parser do
            get_libraries_data(parsed_xml, sections_data) do
       {:ok, full_sections_data}
     else
-      error -> error
+      error -> {:error, :invalid_xml}
     end
   end
 

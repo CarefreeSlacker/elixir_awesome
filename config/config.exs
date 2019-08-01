@@ -46,6 +46,6 @@ config :elixir_awesome, :github_data,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
 
-if(File.exists?("#{File.cwd!()}/config/#{Mix.env()}.secret.exs")) do
+if File.exists?("#{File.cwd!()}/config/#{Mix.env()}.secret.exs") do
   import_config("#{Mix.env()}.secret.exs")
 end
