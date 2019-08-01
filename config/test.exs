@@ -16,3 +16,7 @@ config :elixir_awesome, ElixirAwesome.Repo,
   database: "elixir_awesome_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :elixir_awesome, :github_credentials,
+  username: "Test",
+  password: "Password"

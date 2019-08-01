@@ -70,7 +70,7 @@ defmodule ElixirAwesome.External.RequestService do
       get_last_commit(new_decoded_body, proxy_data)
     else
       [last_commit | _] -> {:ok, last_commit}
-      error -> {:error, error}
+      {:error, error} -> {:error, error}
     end
   end
 
