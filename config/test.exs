@@ -20,3 +20,8 @@ config :elixir_awesome, ElixirAwesome.Repo,
 config :elixir_awesome, :github_credentials,
   username: "Test",
   password: "Password"
+
+config :elixir_awesome, :github_data,
+  proxies_list: [
+    "zproxy.lum-superproxy.io:22225:lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-38.131.159.167:lrzxs947e0j7"
+  ]

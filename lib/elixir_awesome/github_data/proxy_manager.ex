@@ -16,6 +16,7 @@ defmodule ElixirAwesome.GithubData.ProxyManager do
     {:ok, %{free_proxies: ProxyService.get_proxies_credentials(), occupied_proxies: []}}
   end
 
+  @spec get_proxy :: {:ok, tuple} | {:error, :no_available_proxies}
   def get_proxy do
     GenServer.call(__MODULE__, :get_proxy)
   end
