@@ -42,7 +42,7 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
   end
 
   def handle_info(:get_last_commit, %{library_data: library_data, proxy: proxy} = state) do
-    with {:ok, %{author: author, repo: repo}} = updated_library_data <-
+    with {:ok, %{author: author, repo: repo} = updated_library_data} <-
            RequestService.get_library_identity(library_data),
          {:ok, last_commit_date_time} <-
            RequestService.request_last_commit({author, repo}, proxy) do

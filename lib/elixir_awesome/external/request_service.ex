@@ -71,6 +71,7 @@ defmodule ElixirAwesome.External.RequestService do
     else
       [last_commit | _] -> {:ok, last_commit}
       {:error, error} -> {:error, error}
+      %{"message" => "Not Found"} -> {:error, "Repo not found #{}"}
     end
   end
 
