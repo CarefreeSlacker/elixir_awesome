@@ -42,7 +42,19 @@ defmodule ElixirAwesome.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      # Scheduling
+      {:cronex, "~> 0.4.0"},
+      # Parsing data
+      {:sweet_xml, "~> 0.3.0"},
+      {:cmark, "~> 0.7"},
+      {:httpoison, "~> 1.5.1"},
+      {:timex, "~> 3.5"},
+      # Testing
+      {:faker, "~> 0.12", only: :test},
+      {:mock, "~> 0.3.0", only: :test},
+      # Code quality
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
 

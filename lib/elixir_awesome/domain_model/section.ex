@@ -1,4 +1,6 @@
 defmodule ElixirAwesome.DomainModel.Section do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
   alias ElixirAwesome.DomainModel.Library

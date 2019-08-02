@@ -19,6 +19,7 @@ defmodule ElixirAwesomeWeb.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
+      alias ElixirAwesome.Testing.Factory
 
       # The default endpoint for testing
       @endpoint ElixirAwesomeWeb.Endpoint

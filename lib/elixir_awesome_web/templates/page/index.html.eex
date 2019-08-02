@@ -12,27 +12,43 @@
 </div>
 <div id="sections" class="container">
   <div>
-    <h1 class="h1">Sections</h1>
+    <h1 class="h1">Libraries</h1>
   </div>
-  <%= Enum.map(@sections, fn section -> %>
-      <h2 class="h2" id="<%= name_to_link_id(section.name) %>">
-        <a href="#table-of-content" class="btn" title="To tables of content">&#x2B06;</a>
-        <%= section.name %>
-      </h2>
-      <p><%= section.comment %></p>
-      <table class="table">
-        <%= Enum.map(section.libraries, fn library -> %>
-          <tr>
-            <td>
-              <a href="<%= library.url %>">
-                <%= library.name %>
-              </a>
-            </td>
-            <td>Stars: <%= library.stars %></td>
-            <td><%= library.last_commit %></td>
-            <td><%= library.comment %></td>
-          </tr>
-        <% end) %>
-      </table>
+  <div>
+    <a class="btn btn-primary <%= if(@processing, do: "disabled") %>" href="<%= Routes.page_path(@conn, :update) %>">Start refreshing</a>
+    <p><%= @processed_count %></p>
+  </div>
+  <table class="table">
+    <th>
+      <td>Package name</td>
+      <td>Stars count</td>
+      <td>Days since last commit</td>
+      <td>Description</td>
+    </th>
+    <%= Enum.map(@sections, fn section -> %>
+      <tr>
+        <td>
+          <h2 class="h2" id="<%= name_to_link_id(section.name) %>">
+            <a href="#table-of-content" class="btn" title="To tables of content">&#x2B06;</a>
+            <%= section.name %>
+          </h2>
+        </td>
+        <td colspan="3">
+          <p><%= section.comment %></p>
+        </td>
+      </tr>
+      <%= Enum.sort_by(section.libraries, & &1.name) |> Enum.map(fn library -> %>
+        <tr>
+          <td>
+            <a href="<%= library.url %>">
+              <%= library.name %>
+            </a>
+          </td>
+          <td>Stars: <%= library.stars %></td>
+          <td><%= calculate_days_ago(library.last_commit) %></td>
+          <td><%= library.comment %></td>
+        </tr>
+      <% end) %>
     <% end) %>
+  </table>
 </div>

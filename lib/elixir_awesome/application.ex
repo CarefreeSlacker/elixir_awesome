@@ -4,6 +4,8 @@ defmodule ElixirAwesome.Application do
   @moduledoc false
 
   use Application
+  alias ElixirAwesome.External.RefreshDataScheduler
+  alias ElixirAwesome.GithubData.Supervisor, as: GithubDataSupervisor
 
   def start(_type, _args) do
     # List all child processes to be supervised
@@ -11,7 +13,9 @@ defmodule ElixirAwesome.Application do
       # Start the Ecto repository
       ElixirAwesome.Repo,
       # Start the endpoint when the application starts
-      ElixirAwesomeWeb.Endpoint
+      ElixirAwesomeWeb.Endpoint,
+      GithubDataSupervisor,
+      Supervisor.child_spec(RefreshDataScheduler, id: RefreshDataScheduler)
       # Starts a worker by calling: ElixirAwesome.Worker.start_link(arg)
       # {ElixirAwesome.Worker, arg},
     ]
