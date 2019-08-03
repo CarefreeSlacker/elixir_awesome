@@ -15,7 +15,10 @@ config :elixir_awesome, ElixirAwesomeWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "QGXTqYatqQtqAnuupn+Ywk5aSoVGp+ZSUkuK4Tha7Oj2eZcv1LwwMg2ZRYvjqaPC",
   render_errors: [view: ElixirAwesomeWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: ElixirAwesome.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: ElixirAwesome.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [
+    signing_salt: "BSAgND8Bcq7P+F6b2Wremo72FaVEISbd"
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,

@@ -27,6 +27,14 @@ defmodule ElixirAwesome.GithubData.Api do
   end
 
   @doc """
+  Check if download manager run. This is criteria if refreshing process is ongoing
+  """
+  @spec refreshing_github_data? :: boolean
+  def refreshing_github_data? do
+    not is_nil(GenServer.whereis(Manager))
+  end
+
+  @doc """
   Start proxy maanager
   """
   @spec start_proxy_manager :: {:ok, pid} | {:error, any}

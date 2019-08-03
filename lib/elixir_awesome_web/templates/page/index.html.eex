@@ -1,4 +1,30 @@
 <div id="table-of-content" class="container">
+   <div>
+    <section>
+      <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index) %>">All</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index, %{min_stars: 10}) %>">>= 10</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index, %{min_stars: 50}) %>">>= 50</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index, %{min_stars: 300}) %>">>= 300</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+  <div>
+    <%= if @processing do %>
+      <btn class="active btn btn-primary disabled" phx-click="refresh" disabled>Refreshing ...</btn>
+    <% else %>
+      <a class="btn btn-primary <%= if(@processing, do: "disabled") %>" href="<%= Routes.page_path(@conn, :update) %>">Start refreshing</a>
+    <% end %>
+    <p><%= @processed_count %></p>
+  </div>
   <h1 class="h1">Table of content</h1>
   <ul>
     <%= Enum.map(@sections, fn section -> %>
@@ -13,10 +39,6 @@
 <div id="sections" class="container">
   <div>
     <h1 class="h1">Libraries</h1>
-  </div>
-  <div>
-    <a class="btn btn-primary <%= if(@processing, do: "disabled") %>" href="<%= Routes.page_path(@conn, :update) %>">Start refreshing</a>
-    <p><%= @processed_count %></p>
   </div>
   <table class="table">
     <th>

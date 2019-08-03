@@ -32,7 +32,7 @@ defmodule ElixirAwesome.GithubData.ProxyManagerTest do
       caller_process_mock_function: caller_process_mock_function
     } do
       proxy_standard =
-        {"zproxy.lum-superproxy.io", 22225,
+        {"zproxy.lum-superproxy.io", 22_225,
          "lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-38.131.159.167", "lrzxs947e0j7"}
 
       {:ok, _caller_pid} = Task.start_link(caller_process_mock_function.(50, self()))
@@ -82,7 +82,7 @@ defmodule ElixirAwesome.GithubData.ProxyManagerTest do
       :timer.sleep(50)
 
       proxy_standard =
-        {"zproxy.lum-superproxy.io", 22225,
+        {"zproxy.lum-superproxy.io", 22_225,
          "lum-customer-hl_96fff6c5-zone-zone_test_fun_box-ip-38.131.159.167", "lrzxs947e0j7"}
 
       {:ok, _caller_pid} = Task.start_link(caller_process_mock_function.(50, self()))
