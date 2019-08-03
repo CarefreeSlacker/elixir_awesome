@@ -52,7 +52,8 @@ config :elixir_awesome, ElixirAwesomeWeb.Endpoint,
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{lib/elixir_awesome_web/views/.*(ex)$},
-      ~r{lib/elixir_awesome_web/templates/.*(eex)$}
+      ~r{lib/elixir_awesome_web/templates/.*(eex)$},
+      ~r{lib/elixir_awesome_web/live/.*(ex)$}
     ]
   ]
 

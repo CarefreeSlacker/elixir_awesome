@@ -36,7 +36,7 @@ defmodule ElixirAwesome.GithubData.RequestWorker do
         {:noreply, %{state | proxy: proxy, stage: :get_last_commit}}
 
       {:error, :no_available_proxies} ->
-        schedule_stage(:get_proxy)
+        schedule_stage(:get_proxy, 100)
         {:noreply, %{state | stage: :get_proxy}}
     end
   end

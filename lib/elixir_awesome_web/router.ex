@@ -11,6 +11,7 @@ defmodule ElixirAwesomeWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Phoenix.LiveView.Flash
   end
 
   scope "/", ElixirAwesomeWeb do
@@ -18,10 +19,6 @@ defmodule ElixirAwesomeWeb.Router do
 
     get "/", PageController, :index
     get "/start_refreshing", PageController, :update
+    live "/main_page_live", MainPageLive
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", ElixirAwesomeWeb do
-  #   pipe_through :api
-  # end
 end

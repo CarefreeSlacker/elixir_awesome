@@ -12,21 +12,9 @@
       <section class="container">
         <h1>Elixir awesome</h1>
       </section>
-      <section>
-        <ul class="nav justify-content-center">
-          <li class="nav-item">
-            <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index) %>">All</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index, %{min_stars: 10}) %>">>= 10</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index, %{min_stars: 50}) %>">>= 50</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index, %{min_stars: 300}) %>">>= 300</a>
-          </li>
-        </ul>
+      <section class="container">
+        <a class="nav-link active btn btn-primary" href="<%= Routes.live_path(@conn, ElixirAwesomeWeb.MainPageLive) %>">LiveView</a>
+        <a class="nav-link active btn btn-primary" href="<%= Routes.page_path(@conn, :index) %>">Simple</a>
       </section>
     </header>
     <main role="main" class="container">

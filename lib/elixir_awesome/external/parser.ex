@@ -35,7 +35,7 @@ defmodule ElixirAwesome.External.Parser do
            get_libraries_data(parsed_xml, sections_data) do
       {:ok, full_sections_data}
     else
-      error -> {:error, :invalid_xml}
+      _error -> {:error, :invalid_xml}
     end
   end
 
