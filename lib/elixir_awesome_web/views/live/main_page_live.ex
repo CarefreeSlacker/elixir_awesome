@@ -58,12 +58,12 @@ defmodule ElixirAwesomeWeb.MainPageLive do
     <h1 class="h1">Libraries</h1>
     </div>
     <table class="table">
-    <th>
+    <tr>
       <td>Package name</td>
       <td>Stars count</td>
       <td>Days since last commit</td>
       <td>Description</td>
-    </th>
+    </tr>
     <%= Enum.map(@sections, fn section -> %>
       <tr>
         <td>
@@ -94,7 +94,7 @@ defmodule ElixirAwesomeWeb.MainPageLive do
     """
   end
 
-  def mount(params, socket) do
+  def mount(_params, socket) do
     if GithubApi.refreshing_github_data?(), do: schedule_refreshing()
 
     {:ok, set_socket_data(socket)}
@@ -142,7 +142,7 @@ defmodule ElixirAwesomeWeb.MainPageLive do
     {:noreply, set_min_stars(socket, min_stars)}
   end
 
-  def handle_event(any_event, any_value, socket) do
+  def handle_event(_any_event, _any_value, socket) do
     {:noreply, socket}
   end
 
