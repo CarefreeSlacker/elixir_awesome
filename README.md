@@ -1,5 +1,60 @@
 # ElixirAwesome
 
+## English description
+Elixir as many languages have it's `awesome` list https://github.com/h4cc/awesome-elixir. The purpose of this project is to automate it. 
+The necessarities are:
+1. There must be page where you can see `Sections` in table of content and `Libraries` in appropriate sections.
+2. Evety section data contains: `Name`, `Stars count`, `Days since last commit`, `Descrioption` (to see how popular and how stal is it)
+3. Data must be automatatically refreshed every day by CRON
+4. You must have ability to filter libraries by `min_stars` parameter. You can pass it as GET parameter
+
+### Solution
+The exercise itself is really easy. But there is one pitfail. To get all Libraries data you must perform ~2600 requests to GitHub API. If you will do it sequentially you will do it for very long time. So i decided to perform it on concurrent workers. The whole code those relate to it is in `lib/elixir_awesome/github_data`. One worker perform ~2600 requests during 24 minutes. 10 workers during 3 minutes. I am proud of it. Using concurrency in real world.   
+Also there is `LiveView` page. Where you can see how fast libraries refreshing.
+
+### Preparation
+
+**Backend**
+
+1. mix deps.get
+2. mix do ecto.create ecto.migrate
+3. Put `dev.secret.exs` in `config/` (Look "To get aroud of requests per hour restriction")
+
+**Frontend**
+
+* cd assets
+* npm i
+
+**(!)** To get aroud of requests per hour restriction
+
+There is one pitrail: You must perform 2600 requests to GitHub API.
+The restriction for one IP address as unauthorized is 60 requests per hour https://developer.github.com/v3/#rate-limiting
+For authorized is 5000 per hour.
+That's why you need to add file: `dev.secret.exs` to `config/` that looks like:
+
+```elixir
+use Mix.Config
+
+config :elixir_awesome, :github_credentials,
+  username: "<username>",
+  password: "<password>"
+```
+
+### Using project
+
+There are LiveView and usual HTML page. They look 99% same. But on LiveView you can see dynamically how Libraries data refreshing.
+On HTML page you can filter Libraries by passing GET parameter. `?min_stars=588`.    
+For HTML page you must visit: `http://localhost:4000/`, for live view: `http://localhost:4000/main_page_live`    
+The alrogighm is same for both pages. After the preparation of backend and frontend:     
+
+1. From the root run Phoenix server `mix phx.server`
+2. Visit main page `http://localhost:4000/main_page_live`(`http://localhost:4000/`)
+3. Push the button `Start refreshing` http://joxi.ru/4Akqo3wSo9lQym (marked as `1`)    
+4. See how increasing number of refreshed libraries http://joxi.ru/p27P98eUKR8O6A
+5. Filter libraries by `min_stars` http://joxi.ru/4Akqo3wSo9lQym (marked as `2`)
+6. Refreshing time by Concurrent workers is nearly 3 minutes 
+7. Refreshing perform automatically every day at 00:00 в UTC+0. `ElixirAwesome.External.RefreshDataScheduler` runs it.
+
 ## Задание 
 
 У языка Elixir, как и у многих других 1 , существует свой «awesome list»: h4cc/awesome-
@@ -7,7 +62,7 @@ elixir. Однако, библиотеки, будучи добавленным�
 поддерживаться или, не набрав заметной популярности, начинают уступать своим
 аналогам.
 Для наглядного отображения состояния библиотек в awesome list для Elixir вам
-предлагается реализовать web-приложение, удовлетворяющее следующим
+предлагается реализовать web-приложение, удовлетворяющее следующимYour vacancy pretty fit to it.
 требованиям:
 
 * Приложение написано на языке Elixir с использованием фреймворка Phoenix.
@@ -36,7 +91,7 @@ Github.
 
 1. mix deps.get
 2. mix do ecto.create ecto.migrate
-3. Поместить `dev.custom.exs` в папку конфигурации (Смотри пункт "Обход ограничения на колчество запросов")
+3. Поместить `dev.secret.exs` в папку конфигурации (Смотри пункт "Обход ограничения на колчество запросов")
 
 **Подготовка Frontend**
 
@@ -45,7 +100,7 @@ Github.
 
 **(!)** Обход ограничения на колчество запросов
 
-В этой задаче есть один подводным камень: нужно сделать порядка 2400 запросов к API GitHub.
+В этой задаче есть один подводным камень: нужно сделать порядка 2600 запросов к API GitHub.
 Есть ограничение на количество запросов с одного IP адреса https://developer.github.com/v3/#rate-limiting
 Если пользователь не авторизованный, то 60 запросов, если авторизованный - 5000.
 Поэтому необходимо добавить свои авторизационные данные в папку конфигураций в файл: `dev.custom.exs` в виде:
@@ -71,7 +126,7 @@ config :elixir_awesome, :github_credentials,
 3. Нажать кнопку `Start refreshing` http://joxi.ru/4Akqo3wSo9lQym Отмечена цифрой `1` 
 4. Наблюдать как количество обновлённых бибилотек увеличивается http://joxi.ru/p27P98eUKR8O6A
 5. Есть возможность фильтровать по минимальному количеству звёзд http://joxi.ru/4Akqo3wSo9lQym (Отмечена цифрой `2`) можно кнопками
-6. Данные по библиотекам обновляются Concurrency воркерами. Общее количество запросов ~2400 всё это выполняется приблизительно за 3 минуты 
+6. Данные по библиотекам обновляются Concurrency воркерами. Общее количество запросов ~2600 всё это выполняется приблизительно за 3 минуты 
 7. Обновление автоматически запускается в 00:00 в UTC+0. Запускает его `ElixirAwesome.External.RefreshDataScheduler`
 
 P.S. В самом конце загрузки несколько воркеров зависают на какое-то время. Но в конечном итоге отвисают и интерфейс переходит в изначальное состояние.
@@ -88,8 +143,7 @@ P.S. В самом конце загрузки несколько воркеро
 6. Данные по библиотекам обновляются Concurrency воркерами. Общее количество запросов ~2400 всё это выполняется приблизительно за 3 минуты 
 7. Обновление автоматически запускается в 00:00 в UTC+0. Запускает его `ElixirAwesome.External.RefreshDataScheduler`
 
-Кроме этого можно зайти на страницу `http://localhost:4000/main_page_live` она абсолютно идентична за исключением того, что
-когда запускается обновление библиотек можно динамически наблюдать
+
 
 ## План действий (100%):
 
